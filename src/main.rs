@@ -1,7 +1,7 @@
 use actix_web::{App, HttpRequest, HttpServer, web, middleware::Logger};
 use clap::Parser;
 use crate::libs::db;
-use crate::controllers::company_controller::{get_all_companies};
+use crate::controllers::company_controller::{get_all_companies, get_company};
 use crate::models::config;
 
 mod controllers;
@@ -22,9 +22,10 @@ async fn main()  -> std::io::Result<()> {
             .service(web::resource("/index.html").to(|| async { "Hello world!" }))
             .service(web::resource("/").to(index))
             .service(get_all_companies)
+            .service(get_company)
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
-        .bind((format!("{}:{}", &cfg.host, &cfg.port)))?
+        .bind(format!("{}:{}", &cfg.host, &cfg.port))?
         .run()
         .await
 }

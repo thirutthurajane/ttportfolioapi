@@ -1,4 +1,6 @@
 use actix_web::web;
+use bson::doc;
+use bson::oid::ObjectId;
 use futures::TryStreamExt;
 use mongodb::Database;
 use crate::libs::err_handler::ApiError;
@@ -13,5 +15,15 @@ pub async fn get_all_companies(conn: web::Data<Database>) -> Result<Vec<Company>
     }
     Ok(
         compsResult
+    )
+}
+
+pub async fn get_company(conn: web::Data<Database>, id: String) -> Result<Option<Company>, ApiError> {
+    let result = conn.collection::<Company>("companies").find_one(doc! {
+       "_id": ObjectId::parse_str(id)?
+    },None).await?;
+
+    Ok(
+        result
     )
 }
