@@ -1,7 +1,8 @@
 use actix_web::{App, HttpRequest, HttpServer, web, middleware::Logger};
 use clap::Parser;
 use crate::libs::db;
-use crate::controllers::company_controller::{get_all_companies, get_company, add_company, update_company, delete_company};
+use crate::controllers::company_controller::*;
+use crate::controllers::work_controller::*;
 use crate::models::config;
 
 mod controllers;
@@ -26,6 +27,12 @@ async fn main()  -> std::io::Result<()> {
             .service(update_company)
             .service(add_company)
             .service(delete_company)
+            .service(add_work)
+            .service(get_all_works)
+            .service(get_work)
+            .service(update_work)
+            .service(delete_work)
+            .service(get_work_with_comp)
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
         .bind(format!("{}:{}", &cfg.host, &cfg.port))?

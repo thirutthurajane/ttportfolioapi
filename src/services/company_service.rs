@@ -11,8 +11,7 @@ pub async fn get_all_companies(conn: web::Data<Database>) -> Result<Vec<Company>
     let mut cursor = conn.collection::<Company>("companies").find(None, None).await?;
     let mut comps_result: Vec<Company> = Vec::new();
     while let Some(comp) = cursor.try_next().await?{
-        let c = comp;
-        comps_result.push(c);
+        comps_result.push(comp);
     }
     Ok(
         comps_result
