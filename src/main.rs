@@ -1,6 +1,8 @@
 use actix_web::{App, HttpRequest, HttpServer, web, middleware::Logger};
+use clap::Parser;
 use crate::libs::db;
 use crate::controllers::company_controller::{get_all_companies};
+use crate::models::config;
 
 mod controllers;
 mod libs;
@@ -11,7 +13,7 @@ mod services;
 async fn main()  -> std::io::Result<()> {
 
     dotenv::dotenv().ok();
-
+    let cfg = config::Config::parse();
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     let conn = db::connect().await.unwrap();
     HttpServer::new(move || {
@@ -22,7 +24,7 @@ async fn main()  -> std::io::Result<()> {
             .service(get_all_companies)
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
-        .bind(("127.0.0.1", 8080))?
+        .bind((format!("{}:{}", &cfg.host, &cfg.port)))?
         .run()
         .await
 }
