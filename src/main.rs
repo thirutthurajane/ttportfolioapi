@@ -1,4 +1,6 @@
+use actix_cors::Cors;
 use actix_web::{App, HttpRequest, HttpServer, web, middleware::Logger};
+use actix_co
 use clap::Parser;
 use crate::libs::db;
 use crate::controllers::company_controller::*;
@@ -18,6 +20,11 @@ async fn main()  -> std::io::Result<()> {
     env_logger::init_from_env(env_logger::Env::new().default_filter_or("info"));
     let conn = db::connect().await.unwrap();
     HttpServer::new(move || {
+        let cors = Cors::default()
+            .allow_any_origin()
+            .allow_any_header()
+            .max_age(3600);
+
         App::new()
             .app_data(web::Data::new(conn.clone()))
             .service(web::resource("/index.html").to(|| async { "Hello world!" }))
@@ -34,6 +41,7 @@ async fn main()  -> std::io::Result<()> {
             .service(delete_work)
             .service(get_work_with_comp)
             .wrap(Logger::new("%a %{User-Agent}i"))
+            .wrap(cors)
     })
         .bind(format!("{}:{}", &cfg.host, &cfg.port))?
         .run()
