@@ -1,6 +1,5 @@
 use actix_cors::Cors;
 use actix_web::{App, HttpRequest, HttpServer, web, middleware::Logger};
-use actix_co
 use clap::Parser;
 use crate::libs::db;
 use crate::controllers::company_controller::*;
